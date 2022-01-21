@@ -1,0 +1,40 @@
+{
+  "version": 2,
+  "projects": {
+    "core": "packages/core",
+    "cli": "packages/cli",
+    "workspace": {
+      "root": ".",
+      "targets": {
+        "version": {
+          "executor": "@jscutlery/semver:version",
+          "options": {
+            "syncVersions": true,
+            "commitMessageFormat": "chore(${projectName}): release version ${version}",
+            "postTargets": ["core:deploy", "cli:deploy", "workspace:github"],
+            "preid": "beta",
+            "releaseAs": "prerelease",
+            "push": true
+          }
+        },
+        "github": {
+          "executor": "@jscutlery/semver:github",
+          "options": {
+            "tag": "${tag}",
+            "generateNotes": true
+          }
+        },
+        "generate-json-schema": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "ts-node --project packages/core/tsconfig.lib.json tools/utils/generate-json-schema.ts"
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}
